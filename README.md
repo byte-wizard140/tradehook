@@ -143,3 +143,5 @@ for any trades executed using this software. Always test with `--dry-run` first.
 
 - [ntfy-signal-relay](https://github.com/byte-wizard140/ntfy-signal-relay) — 
   parse TradeMAV's ntfy notifications (companion tool, same account)
+- [tradehook skill for OpenClaw](https://github.com/byte-wizard140/tradehook-skill) — 
+  control tradehook from your AI assistant (start/stop, toggle dry_run, read signals)

@@ -3,7 +3,23 @@
 tradehook — community bridge for TradeMAV signals
 Run with: python bridge.py [--dry-run] [--config config.json]
 """
-import argparse, json, sys
+import argparse, json, sys, os, datetime
+
+LOG_FILE = os.path.join(os.path.dirname(__file__), "tradehook.log")
+_log_handle = None
+
+def _open_log():
+    global _log_handle
+    if _log_handle is None:
+        _log_handle = open(LOG_FILE, "a", buffering=1, encoding="utf-8")
+
+def log(msg: str):
+    ts = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    line = f"{ts} {msg}"
+    print(line)
+    _open_log()
+    _log_handle.write(line + "\n")
+
 from ingest.sqlite_reader import SQLiteReader
 from ingest.ntfy_listener import NtfyListener
 from core.signal_parser import parse
@@ -36,7 +52,7 @@ def main():
     dry_run = args.dry_run or cfg.get("dry_run", True)
 
     if dry_run:
-        print("[tradehook] DRY RUN mode — no orders will be placed")
+        log("[tradehook] DRY RUN mode — no orders will be placed")
 
     broker = load_broker(cfg)
 
@@ -46,10 +62,10 @@ def main():
     elif mode == "ntfy":
         ingest = NtfyListener(cfg)
     else:
-        print(f"Unknown ingest_mode: {mode}")
+        log(f"Unknown ingest_mode: {mode}")
         sys.exit(1)
 
-    print(f"[tradehook] Listening via {mode}...")
+    log(f"[tradehook] Listening via {mode} | broker={cfg.get('broker','webhook')} | dry_run={dry_run}")
 
     for raw in ingest.poll():
         sig = parse(raw, cfg)
@@ -57,12 +73,12 @@ def main():
             continue
         if should_fire(sig, cfg):
             qty = cfg.get("quantities", {}).get(sig.ticker, cfg.get("default_qty", 1))
-            print(f"[SIGNAL] {sig.ticker} {sig.direction} | strength={sig.strength:.2f} | aligned={sig.signals_aligned}")
+            log(f"[SIGNAL] {sig.ticker} {sig.direction} | strength={sig.strength:.2f} | aligned={sig.signals_aligned}")
             if dry_run:
-                print(f"[DRY RUN] Would place: {sig.direction} {qty}x {sig.ticker}")
+                log(f"[DRY RUN] Would place: {sig.direction} {qty}x {sig.ticker}")
             else:
                 result = broker.execute(sig, qty)
-                print(f"[ORDER] {result}")
+                log(f"[ORDER] {result}")
 
 if __name__ == "__main__":
     main()
