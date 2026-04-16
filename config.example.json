@@ -1,0 +1,45 @@
+{
+  "_comment": "Copy this to config.json and fill in your values.",
+
+  "ingest_mode": "sqlite",
+
+  "db_path": "D:/TradeMAV/trademav.db",
+  "schema": {
+    "table": "notifications",
+    "col_id": "id",
+    "col_ticker": "ticker",
+    "col_direction": "direction",
+    "col_strength": "strength",
+    "col_aligned": "signals_aligned",
+    "col_timestamp": "updated_at"
+  },
+
+  "ntfy_topic_url": "https://ntfy.sh/your-trademav-topic",
+  "ntfy_token": "",
+
+  "poll_interval": 60,
+  "min_strength": 0.70,
+  "min_aligned": 14,
+  "excluded_tickers": [],
+  "dry_run": true,
+
+  "broker": "webhook",
+
+  "alpaca_api_key": "",
+  "alpaca_secret_key": "",
+  "alpaca_base_url": "https://paper-api.alpaca.markets",
+
+  "webhook_url": "https://your-endpoint.com/signal",
+  "webhook_headers": { "Content-Type": "application/json" },
+
+  "ollama_url": "http://localhost:11434",
+  "ollama_model": "llama3",
+  "ollama_prompt_template": "TradeMAV signal: {ticker} {direction} strength={strength:.2f} aligned={signals_aligned} signals. Should I act on this? Reply YES or NO first.",
+  "ollama_then_broker": "webhook",
+
+  "default_qty": 1,
+  "quantities": {
+    "AAPL": 5,
+    "RELIANCE.NS": 3
+  }
+}

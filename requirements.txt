@@ -1,0 +1,4 @@
+requests>=2.31.0
+# Uncomment what you need:
+# alpaca-trade-api>=3.0.0   # for Alpaca
+# kiteconnect>=4.2.0         # for Zerodha (stub, needs implementation)
